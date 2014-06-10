@@ -58,6 +58,7 @@ class QQmlWebSocket : public QObject, public QQmlParserStatus
 
     Q_ENUMS(Status)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
@@ -79,6 +80,8 @@ public:
     void setUrl(const QUrl &url);
     Status status() const;
     QString errorString() const;
+    QString userAgent() const;
+    void setUserAgent(const QString &userAgent);
 
     void setActive(bool active);
     bool isActive() const;
@@ -92,6 +95,7 @@ Q_SIGNALS:
     void activeChanged(bool isActive);
     void errorStringChanged(QString errorString);
     void urlChanged();
+    void userAgentChanged();
 
 public:
     void classBegin() Q_DECL_OVERRIDE;
@@ -105,6 +109,7 @@ private:
     QScopedPointer<QWebSocket> m_webSocket;
     Status m_status;
     QUrl m_url;
+    QString m_userAgent;
     bool m_isActive;
     bool m_componentCompleted;
     QString m_errorString;

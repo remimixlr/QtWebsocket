@@ -149,6 +149,23 @@ void QQmlWebSocket::setUrl(const QUrl &url)
     }
 }
 
+QString QQmlWebSocket::userAgent() const
+{
+    return m_userAgent;
+}
+
+void QQmlWebSocket::setUserAgent(const QString &userAgent)
+{
+    if (m_userAgent == userAgent) {
+        return;
+    }
+    m_userAgent = userAgent;
+    Q_EMIT userAgentChanged();
+    if(m_webSocket) {
+      m_webSocket->setUserAgent(m_userAgent);
+    }
+}
+
 QQmlWebSocket::Status QQmlWebSocket::status() const
 {
     return m_status;
@@ -262,6 +279,7 @@ bool QQmlWebSocket::isActive() const
 void QQmlWebSocket::open()
 {
     if (m_componentCompleted && m_isActive && m_url.isValid() && Q_LIKELY(m_webSocket)) {
+        m_webSocket->setUserAgent(m_userAgent);
         m_webSocket->open(m_url);
     }
 }

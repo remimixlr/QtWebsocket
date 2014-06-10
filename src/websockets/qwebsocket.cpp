@@ -552,6 +552,15 @@ QString QWebSocket::closeReason() const
 }
 
 /*!
+    \brief Sets the UserAgent for the Websocket connection
+ */
+void QWebSocket::setUserAgent(const QString &userAgent)
+{
+    Q_D(QWebSocket);
+    d->setUserAgent(userAgent);
+}
+
+/*!
     \brief Returns the current state of the socket.
  */
 QAbstractSocket::SocketState QWebSocket::state() const

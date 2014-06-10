@@ -100,6 +100,7 @@ QWebSocketPrivate::QWebSocketPrivate(const QString &origin, QWebSocketProtocol::
     m_origin(origin),
     m_protocol(),
     m_extension(),
+    m_userAgent(),
     m_socketState(QAbstractSocket::UnconnectedState),
     m_pauseMode(QAbstractSocket::PauseNever),
     m_readBufferSize(0),
@@ -132,6 +133,7 @@ QWebSocketPrivate::QWebSocketPrivate(QTcpSocket *pTcpSocket, QWebSocketProtocol:
     m_origin(),
     m_protocol(),
     m_extension(),
+    m_userAgent(),
     m_socketState(pTcpSocket->state()),
     m_pauseMode(pTcpSocket->pauseMode()),
     m_readBufferSize(pTcpSocket->readBufferSize()),
@@ -654,6 +656,14 @@ QString QWebSocketPrivate::closeReason() const
 /*!
  * \internal
  */
+void QWebSocketPrivate::setUserAgent(const QString &userAgent)
+{
+    m_userAgent = userAgent;
+}
+
+/*!
+ * \internal
+ */
 QByteArray QWebSocketPrivate::getFrameHeader(QWebSocketProtocol::OpCode opCode,
                                              quint64 payloadLength, quint32 maskingKey,
                                              bool lastFrame)
@@ -1007,7 +1017,8 @@ void QWebSocketPrivate::processStateChanged(QAbstractSocket::SocketState socketS
                                            origin(),
                                            QString(),
                                            QString(),
-                                           m_key);
+                                           m_key,
+                                           m_userAgent);
             if (handshake.isEmpty()) {
                 m_pSocket->abort();
                 Q_EMIT q->error(QAbstractSocket::ConnectionRefusedError);
@@ -1099,7 +1110,8 @@ QString QWebSocketPrivate::createHandShakeRequest(QString resourceName,
                                                   QString origin,
                                                   QString extensions,
                                                   QString protocols,
-                                                  QByteArray key)
+                                                  QByteArray key,
+                                                  QString userAgent)
 {
     QStringList handshakeRequest;
     if (resourceName.contains(QStringLiteral("\r\n"))) {
@@ -1133,6 +1145,12 @@ QString QWebSocketPrivate::createHandShakeRequest(QString resourceName,
                         QStringLiteral("Upgrade: websocket") <<
                         QStringLiteral("Connection: Upgrade") <<
                         QStringLiteral("Sec-WebSocket-Key: ") % QString::fromLatin1(key);
+
+    if(userAgent.size() != 0)
+    {
+        handshakeRequest << QStringLiteral("User-Agent: ") % userAgent;
+    }
+
     if (!origin.isEmpty())
         handshakeRequest << QStringLiteral("Origin: ") % origin;
     handshakeRequest << QStringLiteral("Sec-WebSocket-Version: ")

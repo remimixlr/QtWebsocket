@@ -141,6 +141,8 @@ public:
     QWebSocketProtocol::CloseCode closeCode() const;
     QString closeReason() const;
 
+    void setUserAgent(const QString &userAgent);
+
     qint64 sendTextMessage(const QString &message);
     qint64 sendBinaryMessage(const QByteArray &data);
 
@@ -190,7 +192,8 @@ private:
                                    QString origin,
                                    QString extensions,
                                    QString protocols,
-                                   QByteArray key);
+                                   QByteArray key,
+                                   QString userAgent);
 
     static QWebSocket *upgradeFrom(QTcpSocket *tcpSocket,
                                    const QWebSocketHandshakeRequest &request,
@@ -211,6 +214,7 @@ private:
     QString m_origin;
     QString m_protocol;
     QString m_extension;
+    QString m_userAgent;
     QAbstractSocket::SocketState m_socketState;
     QAbstractSocket::PauseModes m_pauseMode;
     qint64 m_readBufferSize;
